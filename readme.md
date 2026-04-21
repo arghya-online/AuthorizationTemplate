@@ -1,106 +1,105 @@
 # Authorization Template (Node.js + Express + MongoDB + JWT)
 
-This repository is a reusable authentication and authorization starter that you can plug into any Node.js backend project.
+If you want auth up and running without rewriting the same boilerplate every time, this repo is for you.
 
-It already includes:
+It gives you:
 
-- User registration
-- User login
-- User logout
-- Access token + refresh token flow
-- Cookie-based auth support
-- Avatar and cover photo upload using Cloudinary
-- MongoDB user persistence with Mongoose
+- Register
+- Login
+- Logout
+- JWT access + refresh token flow
+- Cookie-based auth
+- Cloudinary upload support for avatar/cover image
 
-If you want a ready auth base instead of writing auth from scratch in every project, this template is built for that.
+Use it as a starter, then customize based on your project.
 
-## What This Template Gives You
+## Quick Feature List
 
-- Pre-built auth API routes: `register`, `login`, `logout`
+- Auth routes already wired (`register`, `login`, `logout`)
 - Password hashing with `bcrypt`
-- JWT generation and verification with `jsonwebtoken`
-- File upload handling with `multer`
-- Cloud image storage via Cloudinary
-- Clean async error-handling helper
-- Scalable folder architecture for controllers, routes, models, middlewares, and utils
+- JWT token generation + verification
+- Uploads via `multer`
+- Cloudinary integration
+- MongoDB with Mongoose
 
-## Tech Stack
+## Tech
 
 - Node.js
 - Express.js
 - MongoDB + Mongoose
 - JWT (`jsonwebtoken`)
-- Bcrypt
-- Multer
-- Cloudinary
-- Cookie Parser
-- CORS
-- Dotenv
+- bcrypt
+- multer
+- cloudinary
+- cookie-parser
+- cors
+- dotenv
 
-## Project Structure
+## Project Layout
 
 ```text
 src/
-	app.js                  # Express app config, middleware, routes
-	index.js                # Server entry point, env setup, DB connect
-	constants.js            # Env-based constants
-	controllers/
-		user.controller.js    # register, login, logout logic
-	db/
-		db.js                 # MongoDB connection logic
-	middlewares/
-		auth.middleware.js    # JWT verification middleware
-		multer.middleware.js  # File upload config (local temporary storage)
-	models/
-		user.model.js         # User schema + JWT/password model methods
-		video.model.js        # currently empty placeholder
-	routes/
-		user.routes.js        # User route declarations
-	utils/
-		apiError.js
-		apiResponse.js
-		asyncHandler.js
-		cloudinary.js
+   app.js
+   index.js
+   constants.js
+   controllers/
+      user.controller.js
+   db/
+      db.js
+   middlewares/
+      auth.middleware.js
+      multer.middleware.js
+   models/
+      user.model.js
+      video.model.js
+   routes/
+      user.routes.js
+   utils/
+      apiError.js
+      apiResponse.js
+      asyncHandler.js
+      cloudinary.js
 public/
-	uploads/                # Temporary upload storage before Cloudinary upload
+   uploads/
 ```
 
-## Prerequisites
+## Before You Start
 
-Install these before running:
+You need:
 
-1. Node.js (recommended: LTS, v18+)
-2. MongoDB (Atlas cluster or local MongoDB)
-3. Cloudinary account (free tier works)
+1. Node.js (18+ recommended)
+2. MongoDB (local or Atlas)
+3. Cloudinary account
 
-## Installation
+## Setup
 
-From the project root:
+Install packages:
 
 ```bash
 npm install
 ```
 
-Run in development:
+Or install all core dependencies in one go:
+
+```bash
+npm i express mongoose dotenv cors cookie-parser jsonwebtoken bcrypt multer cloudinary
+```
+
+Run the app:
 
 ```bash
 npm start
 ```
 
-## Environment Setup (`.env.sample` -> `.env`)
+## Environment Setup
 
-This project already ships with a `.env.sample` file.
-
-### Step 1: Copy `.env.sample`
-
-Create a `.env` file in the project root and copy all keys from `.env.sample`.
-
-### Step 2: Fill all values
-
-Template keys:
+Copy `.env.sample` to `.env`, then fill values.
 
 ```env
 PORT=5000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:3000
+
 MONGO_URI=your_mongodb_uri
 MONGO_DB_NAME=your_database_name
 
@@ -115,113 +114,78 @@ REFRESH_TOKEN_SECRET=your_refresh_token_secret
 REFRESH_TOKEN_EXPIRES_IN=10d
 ```
 
-### How to Generate Strong JWT Secrets
+What matters here:
 
-Use long random strings (at least 32 characters).
+- `NODE_ENV=production` enables production-safe cookie behavior.
+- `CORS_ORIGIN` should match your frontend URL.
 
-Example (Node.js one-liner):
+Generate strong secrets quickly:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
-Use one generated value for `ACCESS_TOKEN_SECRET` and another different one for `REFRESH_TOKEN_SECRET`.
+Use different values for access and refresh token secrets.
 
-## Cloudinary Setup (Detailed)
+## Cloudinary Setup
 
-1. Create/sign in to Cloudinary.
-2. Open Dashboard.
-3. Copy these values:
-   - Cloud name
-   - API key
-   - API secret
-4. Put them in your `.env`:
-   - `CLOUDINARY_CLOUD_NAME`
-   - `CLOUDINARY_API_KEY`
-   - `CLOUDINARY_API_SECRET`
+1. Open Cloudinary dashboard.
+2. Copy `cloud_name`, `api_key`, `api_secret`.
+3. Put them in `.env`.
 
-How it works in this template:
+Flow in this project:
 
-- Files are uploaded temporarily to `public/uploads` by Multer.
-- Then `uploadToCloudinary()` uploads them to Cloudinary.
-- Local temp files are deleted after upload (or on failure).
-- User document stores Cloudinary URLs (`avatar`, `coverPhoto`).
+1. Multer stores files in `public/uploads`.
+2. Files are uploaded to Cloudinary.
+3. Local temp files are deleted.
+4. User document stores Cloudinary URLs.
 
-## MongoDB Setup (Detailed)
+## MongoDB Setup
 
-### Option A: MongoDB Atlas
+Atlas:
 
-1. Create cluster.
-2. Create DB user.
-3. Add network access IP (`0.0.0.0/0` for dev, restricted IP for production).
-4. Copy connection string.
-5. Set `MONGO_URI` in `.env`.
+1. Create cluster
+2. Create DB user
+3. Allow network access
+4. Paste URI in `MONGO_URI`
 
-### Option B: Local MongoDB
-
-Use:
+Local:
 
 ```env
 MONGO_URI=mongodb://127.0.0.1:27017
 MONGO_DB_NAME=auth_template
 ```
 
-Note: current DB connector uses `MONGO_URI` directly to connect.
-
-## Run the Server
-
-```bash
-npm start
-```
-
-Default route prefix:
-
-```text
-/api/v1/users
-```
-
-Example base URL:
+## API Base URL
 
 ```text
 http://localhost:5000/api/v1/users
 ```
 
-## API Endpoints
+## Routes
 
-### 1) Register User
+### Register
 
-- Method: `POST`
-- Route: `/api/v1/users/register`
-- Content-Type: `multipart/form-data`
+- `POST /api/v1/users/register`
+- Content type: `multipart/form-data`
 - Required text fields:
   - `fullName` (or `fullname` or `name`)
   - `email`
   - `username`
   - `password`
 - Required file fields:
-  - `avatar` (1 file)
-  - `coverPhoto` (1 file)
+  - `avatar`
+  - `coverPhoto`
 
-Success response: `201 Created`
+### Login
 
-### 2) Login User
-
-- Method: `POST`
-- Route: `/api/v1/users/login`
-- Content-Type: `application/json`
-- Required fields:
+- `POST /api/v1/users/login`
+- Content type: `application/json`
+- Required:
   - `password`
   - one of `email` or `username`
 
-Success response: `200 OK`
-
-Behavior:
-
-- Generates `accessToken` and `refreshToken`
-- Returns both in response body
-- Also sets cookies (`accessToken`, `refreshToken`)
-
-Example request body:
+Example body:
 
 ```json
 {
@@ -230,59 +194,47 @@ Example request body:
 }
 ```
 
-### 3) Logout User
+On success:
 
-- Method: `POST`
-- Route: `/api/v1/users/logout`
-- Protected route (requires valid access token)
+- Returns `accessToken` + `refreshToken`
+- Sets `httpOnly` cookies
+- In production, secure cookie settings are applied
 
-How token can be sent:
+### Logout
 
-- Cookie: `accessToken`
-- Header: `Authorization: Bearer <token>`
+- `POST /api/v1/users/logout`
+- Protected route
 
-Success response: `200 OK`
+Send token using either:
 
-Behavior:
+- Cookie `accessToken`
+- Header `Authorization: Bearer <token>`
 
-- Clears refresh token in database
-- Clears auth cookies from browser
+On success:
 
-## Postman Tutorial (Step by Step)
+- Refresh token is removed from DB
+- Auth cookies are cleared
 
-Use this section to test the entire auth flow quickly in Postman.
+## Postman Quick Walkthrough
 
-### Create a Postman Environment
+Create env vars in Postman:
 
-Create environment variables:
+- `baseUrl = http://localhost:5000/api/v1/users`
+- `accessToken =` (empty at first)
 
-- `baseUrl` = `http://localhost:5000/api/v1/users`
-- `accessToken` = (leave empty initially)
+### 1) Register request
 
-### A) Register Request (multipart/form-data)
+- `POST {{baseUrl}}/register`
+- Body -> `form-data`
+- Add fields:
+  - `fullName`, `email`, `username`, `password`
+  - `avatar` file
+  - `coverPhoto` file
 
-1. Create request: `POST {{baseUrl}}/register`
-2. Go to Body -> `form-data`
-3. Add text fields:
-   - `fullName`: `Test User`
-   - `email`: `testuser@example.com`
-   - `username`: `testuser`
-   - `password`: `StrongPassword123`
-4. Add file fields:
-   - key `avatar` -> type `File` -> choose image
-   - key `coverPhoto` -> type `File` -> choose image
-5. Click Send.
+### 2) Login request
 
-Expected result:
-
-- Status `201`
-- User object returned (without password and refresh token)
-
-### B) Login Request (application/json)
-
-1. Create request: `POST {{baseUrl}}/login`
-2. Go to Body -> `raw` -> JSON
-3. Use body:
+- `POST {{baseUrl}}/login`
+- Body -> `raw` -> JSON
 
 ```json
 {
@@ -291,15 +243,7 @@ Expected result:
 }
 ```
 
-4. Click Send.
-
-Expected result:
-
-- Status `200`
-- Response includes `accessToken` and `refreshToken`
-- Cookies include `accessToken` and `refreshToken`
-
-Optional test script in Postman (save access token automatically):
+Optional tests tab script to save token:
 
 ```javascript
 const jsonData = pm.response.json();
@@ -308,130 +252,70 @@ if (jsonData?.data?.accessToken) {
 }
 ```
 
-### C) Logout Request (Protected)
+### 3) Logout request
 
-You can test logout in either way:
+- `POST {{baseUrl}}/logout`
+- Either use cookies from login
+- Or set header `Authorization: Bearer {{accessToken}}`
 
-#### Option 1: Cookie-based (same Postman session)
+## Common Errors (and quick fixes)
 
-1. Create request: `POST {{baseUrl}}/logout`
-2. If cookies from login are present, just click Send.
-
-#### Option 2: Bearer token header
-
-1. Create request: `POST {{baseUrl}}/logout`
-2. Add header:
-   - `Authorization: Bearer {{accessToken}}`
-3. Click Send.
-
-Expected result:
-
-- Status `200`
-- Message confirms logout
-- Auth cookies are cleared
-
-### Common Postman Errors and Fixes
-
-1. `400 All fields are required`
-   - Missing one of: `fullName/fullname/name`, `email`, `username`, `password`.
-2. `400 Avatar and cover photo are required`
-   - You must upload both `avatar` and `coverPhoto` file fields.
-3. `401 Unauthorized, token is missing`
-   - Send cookie from login request or set `Authorization` header.
+1. `All fields are required`
+   - One of the required register fields is missing.
+2. `Avatar and cover photo are required`
+   - Upload both file fields.
+3. `Unauthorized, token is missing`
+   - Send cookie or bearer token.
 4. `User already exists`
-   - Try different `email` or `username`.
+   - Use another email/username.
 
-## Auth Flow Tutorial (How It Works Internally)
+## How It Works (Short Version)
 
-### Registration Flow
+Register flow:
 
-1. Request reaches `user.routes.js` register route.
-2. Multer stores uploaded files in `public/uploads`.
-3. Controller validates all fields and checks duplicate user.
-4. Files are uploaded to Cloudinary.
-5. User is created in MongoDB.
-6. Password is hashed in schema pre-save hook.
-7. Response is returned without password and refresh token.
+1. Validate fields
+2. Upload images to Cloudinary
+3. Create user
+4. Password hash via pre-save hook
 
-### Login Flow
+Login flow:
 
-1. Controller validates input (`password` + `email` or `username`).
-2. User is found in MongoDB.
-3. Password is compared using bcrypt.
-4. Access token + refresh token are generated from model methods.
-5. Refresh token is saved in DB.
-6. Tokens are returned and cookies are set.
+1. Validate credentials
+2. Compare password with bcrypt
+3. Generate access + refresh token
+4. Save refresh token
+5. Send response + cookies
 
-### Logout Flow
+Logout flow:
 
-1. `verifyJWT` middleware validates access token.
-2. Controller clears stored refresh token in DB.
-3. Controller clears auth cookies.
-4. Logout success response is sent.
+1. Verify access token
+2. Remove refresh token from DB
+3. Clear cookies
 
-## What You Should Customize Before Using in Production
+## Before Production
 
-This template works for local/dev use, but you should update the following before production:
+Do these before going live:
 
-1. CORS origin
-   - In `src/app.js`, replace hardcoded `http://localhost:3000` with your frontend origin(s).
-2. Secure cookie settings
-   - Set `secure: true` in production (HTTPS required).
-   - Add `sameSite` policy explicitly.
-3. JWT expiry policy
-   - Tune `ACCESS_TOKEN_EXPIRES_IN` and `REFRESH_TOKEN_EXPIRES_IN` to your security requirements.
-4. Error middleware
-   - Add centralized Express error handler for consistent API error responses.
-5. Validation
-   - Add stronger input validation/sanitization (for example with `zod` or `joi`).
-6. Logging
-   - Replace `console.log` with structured logger (`pino`/`winston`).
-7. Rate limiting and security headers
-   - Add `express-rate-limit` and `helmet`.
-8. Token refresh endpoint
-   - Implement refresh token rotation endpoint for full auth lifecycle.
+1. Set real `CORS_ORIGIN`
+2. Run behind HTTPS
+3. Tune token expiry values
+4. Add centralized error middleware
+5. Add request validation (`zod`/`joi`)
+6. Add rate limiting + `helmet`
+7. Replace `console.log` with proper logger
+8. Add refresh-token rotation endpoint
 
-## Common Integration Notes
+## Reuse In Other Projects
 
-- Frontend must send credentials for cookie-based auth:
-  - `fetch(..., { credentials: 'include' })`
-  - or Axios with `withCredentials: true`
-- Register endpoint requires `multipart/form-data` because of avatar/cover photo files.
-- Ensure `.env` exists before running `npm start`.
+Copy these folders into your backend:
 
-## Quick Test Checklist
+1. `src/controllers`
+2. `src/routes`
+3. `src/models`
+4. `src/middlewares`
+5. `src/utils`
 
-1. Start server.
-2. Call register endpoint with form-data + two image files.
-3. Call login endpoint with email/username + password.
-4. Confirm cookies are set.
-5. Call protected logout endpoint with valid token.
-6. Confirm cookies are cleared and refresh token removed.
-
-## Installed Core Packages
-
-- `express`
-- `mongoose`
-- `dotenv`
-- `cors`
-- `cookie-parser`
-- `jsonwebtoken`
-- `bcrypt`
-- `multer`
-- `cloudinary`
-
-These are already listed in `package.json`, so `npm install` is enough.
-
-## Reusing This Template in Another Project
-
-If you want to use this auth template in a new backend:
-
-1. Copy `src/controllers`, `src/routes`, `src/models`, `src/middlewares`, `src/utils`, and DB bootstrap files.
-2. Keep the same env keys (or update references consistently).
-3. Mount user routes in your app (`/api/v1/users`).
-4. Connect to your MongoDB.
-5. Configure Cloudinary.
-6. Test register -> login -> logout flow.
+Then wire routes, set env values, and test register -> login -> logout.
 
 ## Author
 
