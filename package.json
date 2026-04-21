@@ -1,0 +1,33 @@
+{
+  "name": "authtemplate",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "Arghya",
+  "license": "ISC",
+  "description": "It is authorization template with db connection",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.9.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^7.8.9",
+    "multer": "^2.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arghya-online/AuthorizationTemplate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arghya-online/AuthorizationTemplate/issues"
+  },
+  "homepage": "https://github.com/arghya-online/AuthorizationTemplate#readme"
+}
