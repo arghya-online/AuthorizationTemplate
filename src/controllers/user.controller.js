@@ -35,8 +35,8 @@ const registerUser = asyncHandler(async (req, res) => {
   //Step 11: send response to the client
 
   //Step 1: getting the data from the request body
-  const { fullName, fullname, name, email, username, password } = req.body;
-  const resolvedFullName = fullName ?? fullname ?? name;
+  const { fullname, name, email, username, password } = req.body;
+  const resolvedFullName = fullname ?? name;
   console.log("registerUser body:", { ...req.body, password: "********" });
   console.log(`User ${resolvedFullName} is registered with ${email}`);
 

@@ -1,4 +1,4 @@
-# Authorization Template (Node.js + Express + MongoDB + JWT)
+# Authentication Template (Node.js + Express + MongoDB + JWT)
 
 If you want auth up and running without rewriting the same boilerplate every time, this repo is for you.
 
